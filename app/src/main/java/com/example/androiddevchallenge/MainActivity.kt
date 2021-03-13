@@ -20,6 +20,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,7 +68,7 @@ fun ThemeItem(@DrawableRes imageResId: Int, title: String) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.h2,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(top = 16.dp)
             )
         }
     }
@@ -109,11 +111,11 @@ fun ThemeList() {
 
 @Composable
 fun ProductItemList() {
-    Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Row(with(RowScope) { Modifier.padding(horizontal = 16.dp) }) {
         Text(stringResource(R.string.item_list_title), style = MaterialTheme.typography.h1)
+        Spacer(modifier = Modifier.weight(1.0F))
         Icon(Icons.Filled.FilterList, contentDescription = "")
     }
-    // TODO: Insert sort image
     LazyColumn(
         content = {
             items(12) { index ->
@@ -137,10 +139,24 @@ fun MyApp() {
                     leadingIcon = {
                         Icon(Icons.Filled.Search, contentDescription = "")
                     },
-                    modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(R.string.search_hint_text)) },
                     value = searchTextValue.value,
-                    onValueChange = { searchTextValue.value = it })
+                    onValueChange = { searchTextValue.value = it },
+                    textStyle = MaterialTheme.typography.body1,
+                    shapes = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .border(
+                            border = BorderStroke(1.dp, MaterialTheme.colors.onSurface),
+                            shape = MaterialTheme.shapes.small
+                        ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
             },
             bottomBar = {
                 BottomNavigation(elevation = 16.dp) {
@@ -198,23 +214,6 @@ sealed class Screen(
     object Favorites : Screen("favorites", R.string.tab_favorites, Icons.Filled.FavoriteBorder)
     object Profile : Screen("profile", R.string.tab_profile, Icons.Filled.AccountCircle)
     object Cart : Screen("cart", R.string.tab_cart, Icons.Filled.ShoppingCart)
-}
-
-@Composable
-fun NavItem(imageVector: ImageVector, title: String) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = Modifier
-                .height(24.dp)
-                .width(24.dp),
-            imageVector = imageVector,
-            contentDescription = ""
-        )
-        Text(text = title)
-    }
 }
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
